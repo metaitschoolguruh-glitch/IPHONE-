@@ -1,0 +1,1879 @@
+
+
+<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iSTORE 3D ULTRA - Interaktiv Tellar, Noutbuklar, Smartwatch va Blutus</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Asosiy shrift va quyuq premium dizayn */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #040407;
+            color: #f5f5f7;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Mishka qimirlaganda harakatlanuvchi yoruglik effekti */
+        #mouse-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 620px;
+            height: 620px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.16) 0%, rgba(168, 85, 247, 0.10) 40%, rgba(0, 0, 0, 0) 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+        }
+
+        /* 3D Tilt va Neon Border Hover Kartochkalar */
+        .hover-card {
+            position: relative;
+            background: linear-gradient(145deg, rgba(24, 24, 32, 0.94), rgba(12, 12, 18, 0.98));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .hover-card::before {
+            content: '';
+            position: absolute;
+            top: var(--mouse-y, 50%);
+            left: var(--mouse-x, 50%);
+            width: 340px;
+            height: 340px;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.24), rgba(168, 85, 247, 0.08) 45%, transparent 70%);
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hover-card:hover::before {
+            opacity: 1;
+        }
+
+        .hover-card:hover {
+            border-color: rgba(59, 130, 246, 0.75);
+            box-shadow: 0 25px 55px -12px rgba(59, 130, 246, 0.35), 0 0 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .hover-img-zoom {
+            transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s ease;
+        }
+
+        .hover-card:hover .hover-img-zoom {
+            transform: scale(1.1) rotate(-1.5deg);
+            filter: brightness(1.08);
+        }
+
+        /* Magnit va Yoruglik Tugma Hover Effekti */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 45%;
+            height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            transform: rotate(25deg);
+            transition: all 0.55s ease;
+        }
+
+        .btn-glow:hover::after {
+            left: 135%;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 12px 28px rgba(59, 130, 246, 0.55);
+        }
+
+        /* Navbar link hover chizigi */
+        .nav-link-hover {
+            position: relative;
+            transition: color 0.3s ease, transform 0.25s ease;
+        }
+
+        .nav-link-hover:hover {
+            transform: translateY(-1px);
+        }
+
+        .nav-link-hover::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0%;
+            height: 2.5px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #3b82f6, #a855f7, #10b981);
+            transition: width 0.35s ease;
+        }
+
+        .nav-link-hover:hover::after {
+            width: 100%;
+        }
+
+        /* =========================================================
+           3D INTERAKTIV TELEFON VA NOUTBUK SAHNASI CSS
+           ========================================================= */
+        .studio-perspective {
+            perspective: 1600px;
+        }
+
+        .device-3d-rig {
+            transform-style: preserve-3d;
+            transition: transform 0.08s linear;
+        }
+
+        /* 3D Smartfon Korpusi */
+        .phone-3d-body {
+            position: relative;
+            width: 280px;
+            height: 550px;
+            transform-style: preserve-3d;
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .phone-3d-body.duo-wide {
+            width: 420px;
+            height: 520px;
+        }
+
+        .phone-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 42px;
+        }
+
+        .phone-front {
+            transform: translateZ(14px);
+            background: #09090d;
+            border: 4px solid #3f3f46;
+            box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.25);
+            overflow: hidden;
+        }
+
+        .phone-back {
+            transform: rotateY(180deg) translateZ(14px);
+            background: linear-gradient(145deg, #27272a, #18181b, #09090b);
+            border: 4px solid #52525b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-side-right {
+            position: absolute;
+            top: 32px;
+            bottom: 32px;
+            right: -14px;
+            width: 28px;
+            background: linear-gradient(180deg, #71717a, #3f3f46, #71717a);
+            transform: rotateY(90deg);
+            border-radius: 6px;
+        }
+
+        .phone-side-left {
+            position: absolute;
+            top: 32px;
+            bottom: 32px;
+            left: -14px;
+            width: 28px;
+            background: linear-gradient(180deg, #71717a, #3f3f46, #71717a);
+            transform: rotateY(-90deg);
+            border-radius: 6px;
+        }
+
+        /* 3D Noutbuk Korpusi va Qopqogi (Mishka bilan ochilib-yopiladi) */
+        .laptop-3d-assembly {
+            position: relative;
+            width: 440px;
+            height: 290px;
+            transform-style: preserve-3d;
+        }
+
+        @media (max-width: 640px) {
+            .laptop-3d-assembly {
+                width: 310px;
+                height: 210px;
+            }
+            .phone-3d-body.duo-wide {
+                width: 310px;
+                height: 440px;
+            }
+        }
+
+        /* Noutbuk pastki klaviatura qismi */
+        .laptop-base {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, #3f3f46, #18181b);
+            border-radius: 18px;
+            border: 2px solid #71717a;
+            transform: rotateX(72deg) translateZ(-40px);
+            transform-style: preserve-3d;
+            box-shadow: 0 35px 60px rgba(0, 0, 0, 0.85);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Noutbuk harakatlanuvchi qopqogi (Lid) */
+        .laptop-lid {
+            position: absolute;
+            inset: 0;
+            transform-origin: bottom center;
+            transform-style: preserve-3d;
+            transition: transform 0.12s ease-out;
+        }
+
+        .laptop-screen-front {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            background: #070913;
+            border: 5px solid #27272a;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(59, 130, 246, 0.35);
+        }
+
+        .laptop-lid-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #27272a, #121216, #3f3f46);
+            border: 4px solid #52525b;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(10, 10, 15, 0.84);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+        }
+
+        /* Karusel konteynerlar */
+        .carousel-track {
+            display: flex;
+            transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Musiqa ekvalayzer animatsiyasi */
+        @keyframes eqBar {
+            0%, 100% { height: 4px; }
+            50% { height: 18px; }
+        }
+        .eq-playing span:nth-child(1) { animation: eqBar 0.6s infinite ease-in-out; }
+        .eq-playing span:nth-child(2) { animation: eqBar 0.4s infinite ease-in-out 0.2s; }
+        .eq-playing span:nth-child(3) { animation: eqBar 0.7s infinite ease-in-out 0.1s; }
+        .eq-playing span:nth-child(4) { animation: eqBar 0.5s infinite ease-in-out 0.3s; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Mishka qimirlaganda yoruglik izi -->
+    <div id="mouse-glow"></div>
+
+    <!-- Xabarlar oynasi (Alert orniga) -->
+    <div id="toast-box" class="fixed bottom-6 right-6 z-[10000] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- NAVBAR -->
+    <header class="fixed top-0 left-0 w-full z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- LOGO + BOSILGANDA PASTGA 12 TA BREND VA QURILMA LOGOLARI CHIQADIGAN TUGMA -->
+                <div class="relative">
+                    <button id="logo-dropdown-btn" onclick="toggleLogoMenu()" class="group flex items-center gap-3 px-3.5 py-2 rounded-2xl bg-white/5 hover:bg-blue-600/20 border border-white/10 hover:border-blue-500/60 transition-all duration-300">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 24 24">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.96 6.32c.67-.81 1.12-1.94 1-3.07-.96.04-2.13.64-2.82 1.45-.61.7-.115 1.85-1.01 2.96 1.07.08 2.16-.53 2.83-1.34z"/>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-base font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-200 to-gray-400">iSTORE 3D</span>
+                            <span class="block text-[10px] text-blue-400 font-bold tracking-widest uppercase">12 ta Logo <i class="fa-solid fa-chevron-down ml-1 text-[9px]"></i></span>
+                        </div>
+                    </button>
+
+                    <!-- MEGA-DROPDOWN: 12 TA BREND LOGOLARI -->
+                    <div id="logo-mega-dropdown" class="hidden absolute left-0 mt-3 w-[340px] sm:w-[460px] rounded-3xl bg-[#0e0e14]/95 backdrop-blur-2xl border border-white/15 shadow-2xl p-5 z-50">
+                        <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-blue-400">Qurilmalar va Saytlar Logolari</span>
+                            <span class="text-[11px] text-gray-400">12 ta bolim</span>
+                        </div>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2.5">
+                            <a href="#studiya-3d" onclick="select3DDevice('iphoneDuo'); toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-purple-600/25 border border-white/5 hover:border-purple-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-purple-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-book-open text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">iPhone Duo</span>
+                            </a>
+                            <a href="#studiya-3d" onclick="select3DDevice('iphone18'); toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-blue-600/25 border border-white/5 hover:border-blue-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-blue-600 flex items-center justify-center mb-1.5"><i class="fa-brands fa-apple text-lg text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">iPhone 18</span>
+                            </a>
+                            <a href="#studiya-3d" onclick="select3DDevice('makbook'); toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-emerald-600/25 border border-white/5 hover:border-emerald-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-emerald-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-laptop text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Mak Book</span>
+                            </a>
+                            <a href="#studiya-3d" onclick="select3DDevice('asus'); toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-cyan-600/25 border border-white/5 hover:border-cyan-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-cyan-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-display text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Asus Vivo</span>
+                            </a>
+                            <a href="#smartwatch-bolimi" onclick="toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-orange-600/25 border border-white/5 hover:border-orange-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-orange-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-clock text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Watch Ultra</span>
+                            </a>
+                            <a href="#blutus-bolimi" onclick="toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-sky-600/25 border border-white/5 hover:border-sky-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-sky-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-headphones text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">AirPods Max</span>
+                            </a>
+                            <a href="https://www.apple.com" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-zinc-600/40 border border-white/5 hover:border-white transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-white group-hover:text-black flex items-center justify-center mb-1.5"><i class="fa-solid fa-globe text-sm"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Apple.com</span>
+                            </a>
+                            <a href="https://www.youtube.com/@Apple" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-red-600/25 border border-white/5 hover:border-red-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-red-600 flex items-center justify-center mb-1.5"><i class="fa-brands fa-youtube text-base text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">YouTube</span>
+                            </a>
+                            <button onclick="openRingtoneModal(); toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-amber-600/25 border border-white/5 hover:border-amber-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-amber-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-bell text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Qongiroq</span>
+                            </button>
+                            <a href="#rasm-yuklash" onclick="toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-pink-600/25 border border-white/5 hover:border-pink-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-pink-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-camera text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Rasm Qoyish</span>
+                            </a>
+                            <a href="https://uzum.uz" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-violet-600/25 border border-white/5 hover:border-violet-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-violet-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-bag-shopping text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Uzum.uz</span>
+                            </a>
+                            <a href="#sotuv-bolimi" onclick="toggleLogoMenu()" class="group flex flex-col items-center p-2.5 rounded-2xl bg-white/5 hover:bg-teal-600/25 border border-white/5 hover:border-teal-500 transition-all hover:scale-105">
+                                <div class="w-9 h-9 rounded-full bg-zinc-800 group-hover:bg-teal-600 flex items-center justify-center mb-1.5"><i class="fa-solid fa-store text-sm text-white"></i></div>
+                                <span class="text-[11px] font-bold text-gray-200">Dokon</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ASOSIY NAVIGATSIYA -->
+                <nav class="hidden lg:flex items-center gap-6">
+                    <a href="#hom" onclick="toggleLogoMenu()" class="nav-link-hover text-xs font-extrabold tracking-wider text-white hover:text-blue-400 flex items-center gap-1.5 py-2">
+                        <i class="fa-solid fa-house text-blue-400"></i> HOM
+                    </a>
+                    <a href="#studiya-3d" class="nav-link-hover text-xs font-extrabold tracking-wider text-purple-300 hover:text-purple-400 flex items-center gap-1.5 py-2">
+                        <i class="fa-solid fa-cube text-purple-400"></i> 3D STUDIYA
+                    </a>
+                    <a href="#smartwatch-bolimi" class="nav-link-hover text-xs font-extrabold tracking-wider text-gray-300 hover:text-orange-400 flex items-center gap-1.5 py-2">
+                        <i class="fa-solid fa-clock text-orange-400"></i> WATCH
+                    </a>
+                    <a href="#blutus-bolimi" class="nav-link-hover text-xs font-extrabold tracking-wider text-gray-300 hover:text-cyan-400 flex items-center gap-1.5 py-2">
+                        <i class="fa-brands fa-bluetooth-b text-cyan-400"></i> BLUTUS
+                    </a>
+                    <a href="#sotuv-bolimi" class="nav-link-hover text-xs font-extrabold tracking-wider text-gray-300 hover:text-emerald-400 flex items-center gap-1.5 py-2">
+                        <i class="fa-solid fa-bag-shopping text-emerald-400"></i> SOTUV BOLIMI
+                    </a>
+                    <a href="#abaut" class="nav-link-hover text-xs font-extrabold tracking-wider text-gray-300 hover:text-rose-400 flex items-center gap-1.5 py-2">
+                        <i class="fa-solid fa-circle-info text-rose-400"></i> ABAUT
+                    </a>
+                </nav>
+
+                <!-- ONG TOMON TUGMALAR -->
+                <div class="flex items-center gap-2.5">
+                    <button id="music-toggle-btn" onclick="toggleBgMusic()" class="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 hover:bg-blue-600/30 border border-white/10 hover:border-blue-500 transition-all hover:scale-105">
+                        <div id="eq-bars" class="flex items-end gap-0.5 h-4 eq-playing">
+                            <span class="w-1 bg-blue-400 rounded-full h-2"></span>
+                            <span class="w-1 bg-purple-400 rounded-full h-4"></span>
+                            <span class="w-1 bg-emerald-400 rounded-full h-3"></span>
+                            <span class="w-1 bg-pink-400 rounded-full h-2"></span>
+                        </div>
+                        <span id="music-status-text" class="text-xs font-bold hidden sm:inline text-gray-200">Qoshiq: ON</span>
+                    </button>
+
+                    <button onclick="openRingtoneModal()" class="p-2.5 rounded-full bg-amber-500/15 hover:bg-amber-500 text-amber-400 hover:text-white border border-amber-500/30 transition-all hover:scale-110" title="Apple Qongiroq Ovozi">
+                        <i class="fa-solid fa-bell"></i>
+                    </button>
+
+                    <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 transition-all hover:scale-110">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span id="cart-badge" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-500 text-[11px] font-bold flex items-center justify-center text-white">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobil menyu -->
+        <div class="flex lg:hidden justify-around py-2 border-t border-white/10 bg-black/90 text-[11px] font-extrabold">
+            <a href="#hom" class="text-blue-400">HOM</a>
+            <a href="#studiya-3d" class="text-purple-400">3D TELLAR</a>
+            <a href="#smartwatch-bolimi" class="text-orange-400">WATCH</a>
+            <a href="#blutus-bolimi" class="text-cyan-400">BLUTUS</a>
+            <a href="#sotuv-bolimi" class="text-emerald-400">SOTUV</a>
+        </div>
+    </header>
+
+    <!-- ASOSIY KONTENT -->
+    <main id="hom" class="pt-28 lg:pt-24">
+
+        <!-- =========================================================
+             YANGI MAXSUS BOLIM: 3D INTERAKTIV QURILMALAR STUDIYASI
+             - Button bilan har xil tellar va noutbuklarga otish
+             - Mishkani qimirlatib 360 atrofini korish (old, yon, orqa kamera)
+             - Noutbuklarda mishkani tepa-past qimirlatib qopqoqni ochib-yopish
+             - Tellarning ekranidagi ilovalarni bosib haqiqiy saytlarga kirish
+             ========================================================= -->
+        <section id="studiya-3d" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="rounded-3xl bg-gradient-to-br from-[#0c0e1a] via-[#131026] to-[#080a12] border border-blue-500/25 shadow-2xl p-6 sm:p-10 relative overflow-hidden">
+                
+                <!-- Yuqori sarlavha -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-white/10">
+                    <div>
+                        <span class="px-3.5 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 text-xs font-extrabold uppercase tracking-widest">
+                            <i class="fa-solid fa-vr-cardboard mr-1"></i> 3D Interaktiv Studiya
+                        </span>
+                        <h1 class="text-2xl sm:text-4xl font-black text-white mt-2">Tellar va Noutbuklarni 360° Aylantiring</h1>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-1">
+                            Tugmalarni bosib qurilmani almashtiring, <strong class="text-blue-400">mishkani qimirlatib</strong> atrofini koring, noutbukni <strong class="text-emerald-400">ochib-yoping</strong> va ekran ichidagi saytlarga kiring!
+                        </p>
+                    </div>
+
+                    <!-- Qoshimcha boshqaruv tugmalari -->
+                    <div class="flex flex-wrap gap-2">
+                        <button id="lid-toggle-btn" onclick="toggleLaptopLid()" class="hidden px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold transition-all shadow-lg">
+                            <i class="fa-solid fa-laptop mr-1"></i> Noutbukni Ochish / Yopish
+                        </button>
+                        <button onclick="reset3DAngle()" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-extrabold transition-all">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Togri burchak
+                        </button>
+                        <button id="auto-spin-btn" onclick="toggleAutoSpin()" class="px-4 py-2.5 rounded-xl bg-blue-600/25 hover:bg-blue-600 text-blue-300 hover:text-white border border-blue-500/40 text-xs font-extrabold transition-all">
+                            <i class="fa-solid fa-sync mr-1"></i> Avto 360°: OFF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QURILMA TANLASH TUGMALARI (BUTTON BILAN BIR-BIRIGA OTISH) -->
+                <div class="flex flex-wrap items-center gap-2.5 my-6">
+                    <button onclick="select3DDevice('iphoneDuo')" id="dev-btn-iphoneDuo" class="device-switch-btn px-4 py-2.5 rounded-2xl bg-purple-600 text-white text-xs font-extrabold shadow-lg transition-all hover:scale-105 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> iPhone Duo (2 Ekran)
+                    </button>
+                    <button onclick="select3DDevice('iphone18')" id="dev-btn-iphone18" class="device-switch-btn px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all hover:scale-105 flex items-center gap-2">
+                        <i class="fa-brands fa-apple"></i> iPhone 18 Pro Max
+                    </button>
+                    <button onclick="select3DDevice('iphone17')" id="dev-btn-iphone17" class="device-switch-btn px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all hover:scale-105 flex items-center gap-2">
+                        <i class="fa-solid fa-mobile-screen"></i> iPhone 17 Pro
+                    </button>
+                    <button onclick="select3DDevice('makbook')" id="dev-btn-makbook" class="device-switch-btn px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all hover:scale-105 flex items-center gap-2">
+                        <i class="fa-solid fa-laptop"></i> Mak Book Pro M4
+                    </button>
+                    <button onclick="select3DDevice('asus')" id="dev-btn-asus" class="device-switch-btn px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all hover:scale-105 flex items-center gap-2">
+                        <i class="fa-solid fa-display"></i> Asus Vivo Buuk
+                    </button>
+                </div>
+
+                <!-- 3D INTERAKTIV SAHNA VA MALUMOT PANELI -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- CHAP TOMON: 3D AYLANUVCHI VA OCHILIB-YOPILUVCHI SAHNA (8 ustun) -->
+                    <div id="interactive-3d-stage" class="lg:col-span-8 min-h-[580px] rounded-3xl bg-gradient-to-b from-black/70 via-blue-950/15 to-black/80 border border-white/10 flex flex-col items-center justify-center relative studio-perspective cursor-grab active:cursor-grabbing select-none p-4">
+                        
+                        <!-- Yuqori burchak ko'rsatkichi -->
+                        <div class="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 z-20 pointer-events-none">
+                            <span id="stage-hint-badge" class="px-3 py-1.5 rounded-full bg-black/75 border border-blue-500/40 text-blue-300 text-[11px] font-bold">
+                                <i class="fa-solid fa-computer-mouse mr-1"></i> Mishkani ong-chapga surib 360° aylantiring
+                            </span>
+                            <span id="angle-readout" class="px-3 py-1.5 rounded-full bg-black/75 border border-white/15 text-gray-300 text-[11px] font-mono">
+                                Y: 0° | X: 0°
+                            </span>
+                        </div>
+
+                        <!-- 3D RIG KONTEYNER -->
+                        <div id="device-3d-rig" class="device-3d-rig my-10">
+                            
+                            <!-- 1) SMARTFON 3D MODELI (iPhone Duo / 18 Pro / 17 Pro) -->
+                            <div id="phone-3d-model" class="phone-3d-body duo-wide">
+                                <!-- OLD TOMON (EKRAN VA ICHIDAGI SAYTLAR) -->
+                                <div id="phone-front-shell" class="phone-face phone-front flex flex-col justify-between p-4 bg-gradient-to-b from-indigo-950 via-slate-950 to-black">
+                                    <!-- Dynamic Island -->
+                                    <div class="flex items-center justify-between text-[10px] text-gray-300 px-2">
+                                        <span class="font-bold">15:30</span>
+                                        <div class="w-24 h-5 bg-black rounded-full border border-white/15 flex items-center justify-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                                            <span class="text-[9px] font-bold text-gray-400">Face ID</span>
+                                        </div>
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-solid fa-wifi"></i>
+                                            <i class="fa-solid fa-battery-full text-emerald-400"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- Ekran sarlavhasi -->
+                                    <div class="text-center my-2">
+                                        <span id="phone-screen-badge" class="px-2.5 py-0.5 rounded-full bg-purple-500/30 text-purple-300 text-[10px] font-extrabold uppercase">iPhone Duo Dual OS</span>
+                                        <h4 id="phone-screen-title" class="text-lg font-black text-white mt-1">iPhone Duo Fold</h4>
+                                        <p class="text-[11px] text-gray-400">Ilovalarni bosing va saytlarga kiring:</p>
+                                    </div>
+
+                                    <!-- TELEFON ICHIDAGI SAYTLAR ILOVALARI (BOSILGANDA SAYTGA KIRADI) -->
+                                    <div class="grid grid-cols-4 gap-2.5 px-1 my-auto">
+                                        <a href="https://www.apple.com" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2 rounded-2xl bg-white/10 hover:bg-white hover:text-black transition-all hover:scale-110 group">
+                                            <i class="fa-brands fa-apple text-xl mb-1"></i>
+                                            <span class="text-[9px] font-bold">Apple</span>
+                                        </a>
+                                        <a href="https://www.youtube.com/@Apple" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2 rounded-2xl bg-red-600/25 hover:bg-red-600 text-white transition-all hover:scale-110">
+                                            <i class="fa-brands fa-youtube text-xl text-red-400 group-hover:text-white mb-1"></i>
+                                            <span class="text-[9px] font-bold">YouTube</span>
+                                        </a>
+                                        <a href="https://www.icloud.com" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2 rounded-2xl bg-sky-600/25 hover:bg-sky-600 text-white transition-all hover:scale-110">
+                                            <i class="fa-solid fa-cloud text-xl text-sky-400 mb-1"></i>
+                                            <span class="text-[9px] font-bold">iCloud</span>
+                                        </a>
+                                        <a href="https://uzum.uz" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2 rounded-2xl bg-violet-600/25 hover:bg-violet-600 text-white transition-all hover:scale-110">
+                                            <i class="fa-solid fa-bag-shopping text-xl text-violet-400 mb-1"></i>
+                                            <span class="text-[9px] font-bold">Uzum</span>
+                                        </a>
+                                        <a href="https://www.gsmarena.com" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2 rounded-2xl bg-amber-600/25 hover:bg-amber-600 text-white transition-all hover:scale-110">
+                                            <i class="fa-solid fa-mobile-screen text-xl text-amber-400 mb-1"></i>
+                                            <span class="text-[9px] font-bold">GSMArena</span>
+                                        </a>
+                                        <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2 rounded-2xl bg-orange-600/25 hover:bg-orange-600 text-white transition-all hover:scale-110">
+                                            <i class="fa-brands fa-amazon text-xl text-orange-400 mb-1"></i>
+                                            <span class="text-[9px] font-bold">Amazon</span>
+                                        </a>
+                                        <a href="https://www.sony.com" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2 rounded-2xl bg-indigo-600/25 hover:bg-indigo-600 text-white transition-all hover:scale-110">
+                                            <i class="fa-solid fa-headphones text-xl text-indigo-400 mb-1"></i>
+                                            <span class="text-[9px] font-bold">Sony</span>
+                                        </a>
+                                        <a href="#sotuv-bolimi" class="flex flex-col items-center p-2 rounded-2xl bg-emerald-600/25 hover:bg-emerald-600 text-white transition-all hover:scale-110">
+                                            <i class="fa-solid fa-store text-xl text-emerald-400 mb-1"></i>
+                                            <span class="text-[9px] font-bold">Dokon</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Pastki Dock panel -->
+                                    <div class="mt-2 py-2 px-4 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-around">
+                                        <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:scale-125 transition-transform"><i class="fa-brands fa-safari text-lg"></i></a>
+                                        <a href="https://telegram.org" target="_blank" rel="noopener noreferrer" class="text-sky-400 hover:scale-125 transition-transform"><i class="fa-brands fa-telegram text-lg"></i></a>
+                                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="text-pink-400 hover:scale-125 transition-transform"><i class="fa-brands fa-instagram text-lg"></i></a>
+                                        <button onclick="openRingtoneModal()" class="text-amber-400 hover:scale-125 transition-transform"><i class="fa-solid fa-bell text-lg"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- YON TOMONLAR (TITAN RAMKA) -->
+                                <div class="phone-side-right"></div>
+                                <div class="phone-side-left"></div>
+
+                                <!-- ORQA TOMON (3 TA KAMERA BLOKI VA APPLE LOGOTIPI) -->
+                                <div id="phone-back-shell" class="phone-face phone-back p-6">
+                                    <!-- Kamera oroli -->
+                                    <div class="self-start w-28 h-28 rounded-3xl bg-zinc-900/90 border border-white/20 p-2.5 grid grid-cols-2 gap-2 shadow-xl">
+                                        <div class="rounded-full bg-black border-2 border-blue-500/60 flex items-center justify-center"><div class="w-3 h-3 rounded-full bg-blue-900"></div></div>
+                                        <div class="rounded-full bg-black border-2 border-purple-500/60 flex items-center justify-center"><div class="w-3 h-3 rounded-full bg-purple-900"></div></div>
+                                        <div class="rounded-full bg-black border-2 border-emerald-500/60 flex items-center justify-center"><div class="w-3 h-3 rounded-full bg-emerald-900"></div></div>
+                                        <div class="flex flex-col items-center justify-center gap-1">
+                                            <span class="w-3 h-3 rounded-full bg-amber-200"></span>
+                                            <span class="w-2.5 h-2.5 rounded-full bg-zinc-700"></span>
+                                        </div>
+                                    </div>
+                                    <!-- Markazdagi Apple Logotipi -->
+                                    <div class="my-auto text-center">
+                                        <i class="fa-brands fa-apple text-6xl text-white/80 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"></i>
+                                        <p id="phone-back-label" class="text-xs font-extrabold tracking-widest text-gray-400 mt-3 uppercase">TITANIUM PRO</p>
+                                    </div>
+                                    <div class="text-[10px] text-gray-500 font-semibold">Designed by Apple in California</div>
+                                </div>
+                            </div>
+
+                            <!-- 2) NOUTBUK 3D MODELI (Mak Book Pro M4 / Asus Vivo Buuk - MISHKA BILAN OCHILIB-YOPILADI) -->
+                            <div id="laptop-3d-model" class="hidden laptop-3d-assembly">
+                                <!-- Noutbuk harakatlanuvchi qopqogi (Mishka bilan ochilib-yopiladi) -->
+                                <div id="laptop-lid-hinge" class="laptop-lid" style="transform: rotateX(0deg);">
+                                    <!-- Noutbuk ichki ekrani -->
+                                    <div class="laptop-screen-front p-4 flex flex-col justify-between bg-gradient-to-br from-slate-950 via-blue-950 to-zinc-950">
+                                        <div class="flex items-center justify-between text-[11px] text-gray-300 border-b border-white/10 pb-2">
+                                            <span id="laptop-os-name" class="font-extrabold text-emerald-400"><i class="fa-brands fa-apple mr-1"></i> macOS Sequoia • Mak Book Pro</span>
+                                            <span id="lid-angle-badge" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px]">Qopqoq: 100% Ochiq</span>
+                                        </div>
+
+                                        <!-- Noutbuk ekranidagi saytlar va dasturlar -->
+                                        <div class="grid grid-cols-4 gap-3 my-auto px-2">
+                                            <a href="https://www.apple.com/mac/" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2.5 rounded-xl bg-white/10 hover:bg-blue-600 transition-all hover:scale-105">
+                                                <i class="fa-brands fa-apple text-xl text-white mb-1"></i>
+                                                <span class="text-[10px] font-bold">Apple Mac</span>
+                                            </a>
+                                            <a href="https://www.asus.com/laptops/" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2.5 rounded-xl bg-white/10 hover:bg-cyan-600 transition-all hover:scale-105">
+                                                <i class="fa-solid fa-laptop-code text-xl text-cyan-300 mb-1"></i>
+                                                <span class="text-[10px] font-bold">Asus.com</span>
+                                            </a>
+                                            <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2.5 rounded-xl bg-white/10 hover:bg-red-600 transition-all hover:scale-105">
+                                                <i class="fa-brands fa-youtube text-xl text-red-400 mb-1"></i>
+                                                <span class="text-[10px] font-bold">YouTube</span>
+                                            </a>
+                                            <a href="https://uzum.uz" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center p-2.5 rounded-xl bg-white/10 hover:bg-violet-600 transition-all hover:scale-105">
+                                                <i class="fa-solid fa-bag-shopping text-xl text-violet-400 mb-1"></i>
+                                                <span class="text-[10px] font-bold">Uzum.uz</span>
+                                            </a>
+                                        </div>
+
+                                        <div class="text-center text-[10px] text-gray-400">
+                                            Mishkani tepaga va pastga surib noutbukni yoping yoki oching
+                                        </div>
+                                    </div>
+
+                                    <!-- Noutbuk tashqi qopqogi (Yopilganda korinadi) -->
+                                    <div class="laptop-lid-back">
+                                        <i id="laptop-back-icon" class="fa-brands fa-apple text-6xl text-white/85"></i>
+                                        <span id="laptop-back-brand" class="text-sm font-black tracking-widest text-gray-300 mt-3">MAK BOOK PRO M4</span>
+                                    </div>
+                                </div>
+
+                                <!-- Noutbuk pastki klaviatura korpusi -->
+                                <div class="laptop-base">
+                                    <div class="grid grid-cols-10 gap-1.5 bg-black/60 p-2.5 rounded-xl border border-white/10">
+                                        <div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div>
+                                        <div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div><div class="h-3 bg-zinc-800 rounded"></div>
+                                        <div class="col-span-2 h-3 bg-zinc-800 rounded"></div><div class="col-span-6 h-3 bg-blue-500/30 border border-blue-400/40 rounded"></div><div class="col-span-2 h-3 bg-zinc-800 rounded"></div>
+                                    </div>
+                                    <!-- Trackpad -->
+                                    <div class="w-32 h-14 mx-auto rounded-xl bg-zinc-800/80 border border-white/15"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Pastki Slayderlar (Qol bilan ham 360 aylantirish va noutbukni ochib-yopish uchun) -->
+                        <div class="w-full max-w-lg grid grid-cols-1 sm:grid-cols-2 gap-4 bg-black/75 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 z-20">
+                            <div>
+                                <div class="flex justify-between text-[11px] font-bold text-gray-300 mb-1">
+                                    <span>360° Aylantirish</span>
+                                    <span id="slider-rot-val">0°</span>
+                                </div>
+                                <input type="range" id="manual-rotate-slider" min="-180" max="180" value="0" oninput="manualRotateUpdate(this.value)" class="w-full accent-blue-500 cursor-pointer">
+                            </div>
+                            <div id="lid-slider-box" class="opacity-50 pointer-events-none">
+                                <div class="flex justify-between text-[11px] font-bold text-emerald-300 mb-1">
+                                    <span>Noutbuk Qopqogi</span>
+                                    <span id="slider-lid-val">Ochiq</span>
+                                </div>
+                                <input type="range" id="manual-lid-slider" min="-105" max="0" value="0" oninput="manualLidUpdate(this.value)" class="w-full accent-emerald-500 cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ONG TOMON: TANLANGAN QURILMA XUSUSIYATLARI VA SAYTLARGA TEZKOR KIRISH (4 ustun) -->
+                    <div class="lg:col-span-4 space-y-5">
+                        <div class="hover-card rounded-3xl p-6 space-y-4">
+                            <span id="info-panel-tag" class="inline-block px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-extrabold">2 EKRANLI FLAGMAN</span>
+                            <h3 id="info-panel-title" class="text-2xl sm:text-3xl font-black text-white">iPhone Duo Fold 1TB</h3>
+                            <p id="info-panel-desc" class="text-sm text-gray-300 leading-relaxed">
+                                7.9 dyuymli ichki Super Retina XDR va 6.3 dyuymli tashqi ikki tomonlama displey. Mishkani qimirlatib old va orqa 3 ta kamerani koring.
+                            </p>
+                            <div class="pt-3 border-t border-white/10 flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs text-gray-400 block">Narxi</span>
+                                    <span id="info-panel-price" class="text-3xl font-black text-blue-400">$1,799</span>
+                                </div>
+                                <button id="info-panel-buy-btn" onclick="addToCart('iPhone Duo Fold 1TB', 1799)" class="btn-glow px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs">
+                                    <i class="fa-solid fa-cart-plus mr-1"></i> Sotib olish
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tellarning ichidagi saytlarga tezkor havolalar -->
+                        <div class="hover-card rounded-3xl p-6">
+                            <h4 class="text-sm font-extrabold text-white mb-3 flex items-center gap-2">
+                                <i class="fa-solid fa-globe text-blue-400"></i> Qurilma Ichidagi Rasmiy Saytlar
+                            </h4>
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <a href="https://www.apple.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 hover:bg-blue-600/25 border border-white/10 hover:border-blue-500 transition-all text-xs font-bold">
+                                    <i class="fa-brands fa-apple text-base"></i> Apple.com
+                                </a>
+                                <a href="https://www.asus.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 hover:bg-cyan-600/25 border border-white/10 hover:border-cyan-500 transition-all text-xs font-bold">
+                                    <i class="fa-solid fa-laptop text-base text-cyan-400"></i> Asus.com
+                                </a>
+                                <a href="https://www.youtube.com/@Apple" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 hover:bg-red-600/25 border border-white/10 hover:border-red-500 transition-all text-xs font-bold">
+                                    <i class="fa-brands fa-youtube text-base text-red-500"></i> YouTube
+                                </a>
+                                <a href="https://uzum.uz" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 hover:bg-violet-600/25 border border-white/10 hover:border-violet-500 transition-all text-xs font-bold">
+                                    <i class="fa-solid fa-bag-shopping text-base text-violet-400"></i> Uzum.uz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             1-KARUSEL: FLAGMAN SMARTFONLAR (iPhone Duo, 18 Pro, 17 Pro)
+             ========================================================= -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-blue-400">1-Karusel • Flagman Smartfonlar</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">iPhone Duo, 18 Pro va 17 Pro</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="moveCarousel(1, -1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-blue-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button onclick="moveCarousel(1, 1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-blue-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <div class="relative overflow-hidden rounded-3xl border border-white/10 shadow-2xl bg-zinc-900">
+                <div id="carousel-1" class="carousel-track">
+                    <div class="min-w-full grid grid-cols-1 lg:grid-cols-2 items-center p-8 sm:p-12 bg-gradient-to-br from-zinc-900 via-purple-950 to-indigo-950">
+                        <div class="space-y-4">
+                            <span class="px-3.5 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 text-xs font-extrabold">IKKI EKRANLI DUO</span>
+                            <h3 class="text-3xl sm:text-5xl font-black text-white">iPhone Duo Fold</h3>
+                            <p class="text-gray-300 text-sm sm:text-base">7.9 dyuymli ichki va 6.3 dyuymli tashqi ikki tomonlama Super Retina XDR ekran.</p>
+                            <button onclick="addToCart('iPhone Duo Fold 1TB', 1799)" class="btn-glow px-6 py-3 rounded-2xl bg-purple-600 text-white font-bold text-sm">Sotib olish — $1,799</button>
+                        </div>
+                        <div class="mt-6 lg:mt-0 flex justify-center">
+                            <img src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=800&q=80" onerror="this.src='https://placehold.co/600x400/2e1065/e9d5ff?text=iPhone+Duo'" alt="iPhone Duo" class="w-full max-w-md h-64 sm:h-80 object-cover rounded-3xl shadow-2xl">
+                        </div>
+                    </div>
+                    <div class="min-w-full grid grid-cols-1 lg:grid-cols-2 items-center p-8 sm:p-12 bg-gradient-to-br from-zinc-900 via-slate-900 to-blue-950">
+                        <div class="space-y-4">
+                            <span class="px-3.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-extrabold">TITANIUM FLAGMAN</span>
+                            <h3 class="text-3xl sm:text-5xl font-black text-white">iPhone 18 Pro Max</h3>
+                            <p class="text-gray-300 text-sm sm:text-base">A20 Bionic Neyron chipi, 200 MP periskop kamera va kosmik titan korpus.</p>
+                            <button onclick="addToCart('iPhone 18 Pro Max', 1499)" class="btn-glow px-6 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm">Sotib olish — $1,499</button>
+                        </div>
+                        <div class="mt-6 lg:mt-0 flex justify-center">
+                            <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80" onerror="this.src='https://placehold.co/600x400/1e293b/60a5fa?text=iPhone+18+Pro'" alt="iPhone 18 Pro" class="w-full max-w-md h-64 sm:h-80 object-cover rounded-3xl shadow-2xl">
+                        </div>
+                    </div>
+                    <div class="min-w-full grid grid-cols-1 lg:grid-cols-2 items-center p-8 sm:p-12 bg-gradient-to-br from-zinc-900 via-emerald-950 to-teal-950">
+                        <div class="space-y-4">
+                            <span class="px-3.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-extrabold">OMMABOP TANLOV</span>
+                            <h3 class="text-3xl sm:text-5xl font-black text-white">iPhone 17 Pro</h3>
+                            <p class="text-gray-300 text-sm sm:text-base">A19 Pro protsessori, 120Hz ProMotion ekran va professional tungi kamera.</p>
+                            <button onclick="addToCart('iPhone 17 Pro 256GB', 1199)" class="btn-glow px-6 py-3 rounded-2xl bg-emerald-600 text-white font-bold text-sm">Sotib olish — $1,199</button>
+                        </div>
+                        <div class="mt-6 lg:mt-0 flex justify-center">
+                            <img src="https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?auto=format&fit=crop&w=800&q=80" onerror="this.src='https://placehold.co/600x400/064e3b/34d399?text=iPhone+17+Pro'" alt="iPhone 17 Pro" class="w-full max-w-md h-64 sm:h-80 object-cover rounded-3xl shadow-2xl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             2-KARUSEL: NOUTBUKLAR (Mak Book Pro, Asus Vivo Buuk, ROG)
+             ========================================================= -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400">2-Karusel • Kuchli Noutbuklar</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Mak Book va Asus Vivo Buuk</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="moveCarousel(2, -1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-emerald-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button onclick="moveCarousel(2, 1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-emerald-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl">
+                <div id="carousel-2" class="carousel-track gap-6">
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/064e3b/34d399?text=Mak+Book+Pro'" alt="Mak Book Pro" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Mak Book Pro 16 M4 Max</h3>
+                            <p class="text-gray-400 text-xs mt-1">36GB RAM, 1TB SSD, Liquid Retina XDR.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-emerald-400">$2,199</span>
+                            <button onclick="addToCart('Mak Book Pro 16 M4 Max', 2199)" class="btn-glow px-4 py-2 rounded-xl bg-emerald-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/0f172a/38bdf8?text=Asus+Vivo+Buuk'" alt="Asus Vivo Buuk" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Asus Vivo Buuk Pro 16</h3>
+                            <p class="text-gray-400 text-xs mt-1">Core Ultra 9, 32GB RAM, 4K OLED.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-cyan-400">$1,050</span>
+                            <button onclick="addToCart('Asus Vivo Buuk Pro 16', 1050)" class="btn-glow px-4 py-2 rounded-xl bg-cyan-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/311042/f43f5e?text=Asus+ROG'" alt="Asus ROG" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Asus ROG Zephyrus G16</h3>
+                            <p class="text-gray-400 text-xs mt-1">RTX 4080, 32GB RAM, 240Hz ekran.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-rose-400">$1,890</span>
+                            <button onclick="addToCart('Asus ROG Zephyrus G16', 1890)" class="btn-glow px-4 py-2 rounded-xl bg-rose-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/065f46/6ee7b7?text=Mak+Book+Air'" alt="Mak Book Air" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Mak Book Air 15 M4</h3>
+                            <p class="text-gray-400 text-xs mt-1">1.2 kg yengil vazn, 16GB RAM.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-teal-400">$1,350</span>
+                            <button onclick="addToCart('Mak Book Air 15 M4', 1350)" class="btn-glow px-4 py-2 rounded-xl bg-teal-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             3-KARUSEL: SMARTWATCH SOATLAR BOLIMI
+             ========================================================= -->
+        <section id="smartwatch-bolimi" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-orange-400">3-Karusel • Aqlli Soatlar</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Smartwatch Kolleksiyasi</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="moveCarousel(3, -1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-orange-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button onclick="moveCarousel(3, 1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-orange-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl">
+                <div id="carousel-3" class="carousel-track gap-6">
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/431407/fb923c?text=Watch+Ultra+3'" alt="Watch Ultra 3" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Apple Watch Ultra 3</h3>
+                            <p class="text-gray-400 text-xs mt-1">Titan 49mm, 72 soat batareya, GPS.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-orange-400">$799</span>
+                            <button onclick="addToCart('Apple Watch Ultra 3', 799)" class="btn-glow px-4 py-2 rounded-xl bg-orange-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/1e1b4b/a78bfa?text=Watch+Series+11'" alt="Watch Series 11" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Apple Watch Series 11</h3>
+                            <p class="text-gray-400 text-xs mt-1">EKG, qon kislorodi va yurak nazorati.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-indigo-400">$429</span>
+                            <button onclick="addToCart('Apple Watch Series 11', 429)" class="btn-glow px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/0f172a/38bdf8?text=Galaxy+Watch'" alt="Galaxy Watch" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Galaxy Watch Ultra</h3>
+                            <p class="text-gray-400 text-xs mt-1">Safir shisha, 100m suvga chidamli.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-blue-400">$649</span>
+                            <button onclick="addToCart('Galaxy Watch Ultra', 649)" class="btn-glow px-4 py-2 rounded-xl bg-blue-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/064e3b/34d399?text=Garmin+Fenix+8'" alt="Garmin Fenix" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Garmin Fenix 8 Solar</h3>
+                            <p class="text-gray-400 text-xs mt-1">28 kun quvvat, quyosh batareyasi.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-emerald-400">$899</span>
+                            <button onclick="addToCart('Garmin Fenix 8 Solar', 899)" class="btn-glow px-4 py-2 rounded-xl bg-emerald-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             4-KARUSEL: BLUTUS QULOQCHINLAR BOLIMI
+             ========================================================= -->
+        <section id="blutus-bolimi" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-cyan-400">4-Karusel • Simsiz Audio</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Blutus Quloqchinlar va Naushniklar</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="moveCarousel(4, -1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-cyan-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button onclick="moveCarousel(4, 1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-cyan-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl">
+                <div id="carousel-4" class="carousel-track gap-6">
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/083344/22d3ee?text=AirPods+Max+2'" alt="AirPods Max 2" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">AirPods Max 2 USB-C</h3>
+                            <p class="text-gray-400 text-xs mt-1">3D Fazoviy audio va kuchli ANC.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-cyan-400">$549</span>
+                            <button onclick="addToCart('AirPods Max 2 USB-C', 549)" class="btn-glow px-4 py-2 rounded-xl bg-cyan-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/1e293b/60a5fa?text=AirPods+Pro+3'" alt="AirPods Pro 3" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">AirPods Pro 3 MagSafe</h3>
+                            <p class="text-gray-400 text-xs mt-1">Blutus 5.4, kristal tiniq ovoz.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-blue-400">$249</span>
+                            <button onclick="addToCart('AirPods Pro 3 MagSafe', 249)" class="btn-glow px-4 py-2 rounded-xl bg-blue-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/2e1065/c084fc?text=Sony+XM6'" alt="Sony XM6" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Sony WH-1000XM6</h3>
+                            <p class="text-gray-400 text-xs mt-1">40 soat batareya, Hi-Res audio.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-purple-400">$399</span>
+                            <button onclick="addToCart('Sony WH-1000XM6', 399)" class="btn-glow px-4 py-2 rounded-xl bg-purple-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/451a03/fbbf24?text=JBL+Tour+Pro'" alt="JBL Tour Pro" class="w-full h-48 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">JBL Tour Pro 3 Blutus</h3>
+                            <p class="text-gray-400 text-xs mt-1">Sensor ekranli zaryadlash qutisi.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-amber-400">$279</span>
+                            <button onclick="addToCart('JBL Tour Pro 3 Blutus', 279)" class="btn-glow px-4 py-2 rounded-xl bg-amber-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             5-KARUSEL: MAGSAFE VA AKSESSUARLAR KARUSELI
+             ========================================================= -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-pink-400">5-Karusel • Original Aksessuarlar</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">MagSafe Zaryadkalar va Giloflar</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="moveCarousel(5, -1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-pink-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button onclick="moveCarousel(5, 1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-pink-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl">
+                <div id="carousel-5" class="carousel-track gap-6">
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1615526675159-e248c3021d3f?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/500724/f472b6?text=MagSafe+3in1'" alt="MagSafe 3in1" class="w-full h-44 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">MagSafe 3-in-1 Stansiya</h3>
+                            <p class="text-gray-400 text-xs mt-1">iPhone, Watch va AirPods bir vaqtda zaryad.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-pink-400">$129</span>
+                            <button onclick="addToCart('MagSafe 3-in-1 Stansiya', 129)" class="btn-glow px-4 py-2 rounded-xl bg-pink-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/1e1b4b/818cf8?text=Apple+140W+Adapter'" alt="140W Adapter" class="w-full h-44 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Apple 140W Tezkor Adapter</h3>
+                            <p class="text-gray-400 text-xs mt-1">Mak Book va iPhone uchun super tez zaryad.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-indigo-400">$99</span>
+                            <button onclick="addToCart('Apple 140W Tezkor Adapter', 99)" class="btn-glow px-4 py-2 rounded-xl bg-indigo-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=600&q=80" onerror="this.src='https://placehold.co/500x350/064e3b/34d399?text=AirTag+4+Pack'" alt="AirTag" class="w-full h-44 object-cover rounded-2xl mb-4 hover-img-zoom">
+                            <h3 class="text-lg font-bold text-white">Apple AirTag 4-Pack</h3>
+                            <p class="text-gray-400 text-xs mt-1">Buyumlaringizni aniq GPS orqali toping.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <span class="text-xl font-black text-emerald-400">$95</span>
+                            <button onclick="addToCart('Apple AirTag 4-Pack', 95)" class="btn-glow px-4 py-2 rounded-xl bg-emerald-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             6-KARUSEL: CHEGIRMADAGI TOP TOVARLAR KARUSELI
+             ========================================================= -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-rose-400">6-Karusel • Maxsus Chegirmalar</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Hafta Chegirmalari (-25% Gacha)</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="moveCarousel(6, -1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-rose-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button onclick="moveCarousel(6, 1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-rose-600 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl">
+                <div id="carousel-6" class="carousel-track gap-6">
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block px-2.5 py-0.5 rounded-full bg-rose-600 text-[10px] font-extrabold mb-3">-20% CHEGIRMA</span>
+                            <h3 class="text-lg font-bold text-white">iPhone 17 Pro + AirPods Pro 3</h3>
+                            <p class="text-gray-400 text-xs mt-1">Ikkalasi birga maxsus aksiya narxida!</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <div><span class="text-xs line-through text-gray-500 mr-2">$1,448</span><span class="text-xl font-black text-rose-400">$1,299</span></div>
+                            <button onclick="addToCart('Komplekt: iPhone 17 Pro + AirPods', 1299)" class="btn-glow px-4 py-2 rounded-xl bg-rose-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block px-2.5 py-0.5 rounded-full bg-rose-600 text-[10px] font-extrabold mb-3">-15% CHEGIRMA</span>
+                            <h3 class="text-lg font-bold text-white">Asus Vivo Buuk + Sony XM6</h3>
+                            <p class="text-gray-400 text-xs mt-1">Ish va oyinlar uchun tayyor toplam.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <div><span class="text-xs line-through text-gray-500 mr-2">$1,449</span><span class="text-xl font-black text-rose-400">$1,250</span></div>
+                            <button onclick="addToCart('Komplekt: Asus Vivo + Sony XM6', 1250)" class="btn-glow px-4 py-2 rounded-xl bg-rose-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-6 flex flex-col justify-between">
+                        <div>
+                            <span class="inline-block px-2.5 py-0.5 rounded-full bg-rose-600 text-[10px] font-extrabold mb-3">-25% CHEGIRMA</span>
+                            <h3 class="text-lg font-bold text-white">Apple Watch Series 11 + Kamar</h3>
+                            <p class="text-gray-400 text-xs mt-1">Titan milan kamar sovga sifatida beriladi.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                            <div><span class="text-xs line-through text-gray-500 mr-2">$520</span><span class="text-xl font-black text-rose-400">$399</span></div>
+                            <button onclick="addToCart('Komplekt: Watch Series 11', 399)" class="btn-glow px-4 py-2 rounded-xl bg-rose-600 text-xs font-bold text-white">Savatga</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIDEO BOLIMI VA BURCHAKDAGI TUGMA ORQALI FAYLDAN RASM QOYISH BOLIMI -->
+        <section id="rasm-yuklash" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- VIDEO QOYILGAN QISM -->
+                <div class="hover-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-xs font-extrabold uppercase tracking-widest text-rose-400">Jonli Taqdimot</span>
+                            <h3 class="text-2xl font-extrabold text-white">iPhone Duo va Mak Book Video</h3>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 text-xs font-bold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span> 4K HDR
+                        </span>
+                    </div>
+
+                    <div class="relative rounded-2xl overflow-hidden bg-black aspect-video border border-white/10">
+                        <video id="promo-video" class="w-full h-full object-cover" autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=80">
+                            <source src="https://assets.mixkit.co/videos/preview/mixkit-hands-holding-a-smart-phone-with-a-green-screen-32778-large.mp4" type="video/mp4">
+                            Sizning brauzeringiz videoni qollab-quvvatlamaydi.
+                        </video>
+                        <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between bg-black/65 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/10">
+                            <span class="text-xs font-semibold text-gray-200">Apple, Asus va Blutus Obzori</span>
+                            <button onclick="toggleVideoPlay()" id="video-play-btn" class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white">
+                                <i class="fa-solid fa-pause mr-1"></i> Pauza
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RASM QOYISH VA BURCHAKDAGI TUGMA BOSILGANDA FAYLGA AUTO KIRIB RASM TANLASH -->
+                <div class="hover-card rounded-3xl p-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400">Shaxsiy Galereya</span>
+                            <h3 class="text-2xl font-extrabold text-white">Qurilmangiz Rasmini Joylang</h3>
+                        </div>
+                        <span class="text-xs text-gray-400">Burchakdagi tugmani bosing</span>
+                    </div>
+
+                    <div class="relative rounded-2xl overflow-hidden bg-zinc-950 aspect-video border-2 border-dashed border-white/20 hover:border-blue-500 transition-all group">
+                        <img id="custom-uploaded-image" src="https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=900&q=80" onerror="this.src='https://placehold.co/800x450/18181b/3b82f6?text=Rasm+Yuklash'" alt="Tanlangan rasm" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        
+                        <input type="file" id="hidden-file-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+
+                        <!-- BURCHAKDAGI MAXSUS TUGMA -->
+                        <button onclick="triggerFileSelect()" class="btn-glow absolute top-4 right-4 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-xs shadow-2xl border border-white/20 flex items-center gap-2 z-20 cursor-pointer">
+                            <i class="fa-solid fa-folder-open text-sm"></i>
+                            <span>Fayldan rasm qoyish</span>
+                        </button>
+
+                        <div class="absolute bottom-3 left-3 px-3 py-1.5 rounded-lg bg-black/75 backdrop-blur-md text-[11px] text-gray-300 border border-white/10">
+                            <i class="fa-solid fa-wand-magic-sparkles text-blue-400 mr-1"></i> Yuqori ong burchakdagi tugma orqali fayldan rasm tanlang
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SOTUV BOLIMI (ENI 100% FULL WIDTH) -->
+        <section id="sotuv-bolimi" class="w-full min-h-[900px] py-16 bg-gradient-to-b from-[#07070b] via-[#0d101d] to-[#050507] border-y border-white/10">
+            <div class="w-full px-4 sm:px-8 lg:px-14">
+                
+                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+                    <div>
+                        <span class="px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold uppercase tracking-widest">
+                            SOTUV BOLIMI • 100% Kenglikdagi Katalog
+                        </span>
+                        <h2 class="text-3xl sm:text-5xl font-black text-white mt-3">Barcha Qurilmalar Dokoni</h2>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2.5">
+                        <button onclick="filterProducts('all')" class="filter-btn active px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-extrabold transition-all" data-filter="all">Barchasi (16)</button>
+                        <button onclick="filterProducts('iphone')" class="filter-btn px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all" data-filter="iphone">iPhone Duo & 18/17 Pro</button>
+                        <button onclick="filterProducts('laptop')" class="filter-btn px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all" data-filter="laptop">Noutbuklar</button>
+                        <button onclick="filterProducts('watch')" class="filter-btn px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all" data-filter="watch">Smartwatch</button>
+                        <button onclick="filterProducts('bluetooth')" class="filter-btn px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 text-xs font-extrabold transition-all" data-filter="bluetooth">Blutus</button>
+                    </div>
+                </div>
+
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+
+            </div>
+        </section>
+
+        <!-- ABAUT BOLIMI -->
+        <section id="abaut" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="rounded-3xl bg-gradient-to-r from-zinc-900 via-[#12131c] to-zinc-900 border border-white/10 p-8 sm:p-12">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2 space-y-4">
+                        <span class="px-3 py-1 rounded-full bg-blue-500/15 text-blue-400 text-xs font-extrabold uppercase tracking-wider">ABAUT • Biz Haqimizda</span>
+                        <h2 class="text-3xl sm:text-4xl font-black text-white">Nega Aynan iSTORE 3D Markazi?</h2>
+                        <p class="text-gray-300 leading-relaxed">
+                            Biz eng songgi rusumdagi <strong class="text-white">iPhone Duo</strong>, <strong class="text-white">iPhone 18 Pro</strong>, <strong class="text-white">iPhone 17 Pro</strong>, kuchli noutbuklar — <strong class="text-white">Mak Book</strong>, <strong class="text-white">Asus Vivo Buuk</strong>, zamonaviy <strong class="text-white">Smartwatch</strong> soatlar va <strong class="text-white">Blutus</strong> quloqchinlarni 3D korish imkoniyati va rasmiy kafolat bilan taqdim etamiz.
+                        </p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="hover-card p-5 rounded-2xl text-center">
+                            <div class="text-3xl font-black text-blue-400">100%</div>
+                            <div class="text-xs text-gray-400 mt-1 font-semibold">Original Mahsulot</div>
+                        </div>
+                        <div class="hover-card p-5 rounded-2xl text-center">
+                            <div class="text-3xl font-black text-purple-400">360°</div>
+                            <div class="text-xs text-gray-400 mt-1 font-semibold">3D Tekshiruv</div>
+                        </div>
+                        <div class="hover-card p-5 rounded-2xl text-center">
+                            <div class="text-3xl font-black text-emerald-400">24/7</div>
+                            <div class="text-xs text-gray-400 mt-1 font-semibold">Qollab-quvvatlash</div>
+                        </div>
+                        <div class="hover-card p-5 rounded-2xl text-center">
+                            <div class="text-3xl font-black text-amber-400">25,000+</div>
+                            <div class="text-xs text-gray-400 mt-1 font-semibold">Mamnun Mijozlar</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             7-KARUSEL: MIJOZLAR FIKRLARI VA BAHOLARI KARUSELI
+             ========================================================= -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest text-amber-400">7-Karusel • Mijozlar Fikrlari</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Xaridorlarimiz Nima Deydi?</h2>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="moveCarousel(7, -1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-amber-500 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button onclick="moveCarousel(7, 1)" class="w-10 h-10 rounded-full bg-white/10 hover:bg-amber-500 text-white flex items-center justify-center transition-all hover:scale-110"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-3xl">
+                <div id="carousel-7" class="carousel-track gap-6">
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-7">
+                        <div class="flex text-amber-400 text-sm mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-6">"3D studiyada iPhone Duo ni 360 daraja aylantirib kordim va ekranidagi ilovadan Apple saytiga kirdim. Juda ajoyib!"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center font-bold text-white">JS</div>
+                            <div><div class="text-sm font-bold text-white">Jasurbek Sodiqov</div><div class="text-xs text-gray-400">Toshkent</div></div>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-7">
+                        <div class="flex text-amber-400 text-sm mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-6">"Mak Book Pro M4 qopqogini mishka bilan ochib-yopib tekshirdim. Hamma tomoni juda aniq ishlangan."</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white">MA</div>
+                            <div><div class="text-sm font-bold text-white">Madina Alimova</div><div class="text-xs text-gray-400">Samarqand</div></div>
+                        </div>
+                    </div>
+                    <div class="min-w-full md:min-w-[48%] lg:min-w-[32%] hover-card rounded-3xl p-7">
+                        <div class="flex text-amber-400 text-sm mb-4"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-6">"Asus Vivo Buuk va AirPods Max 2 blutus quloqchinlarini birga buyurtma berdim. Tez yetkazib berishdi."</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-cyan-600 flex items-center justify-center font-bold text-white">BK</div>
+                            <div><div class="text-sm font-bold text-white">Bobur Karimov</div><div class="text-xs text-gray-400">Buxoro</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-white/10 bg-black py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-brands fa-apple text-2xl text-white"></i>
+                <span class="font-extrabold text-white tracking-wider">iSTORE 3D ULTRA UZBEKISTAN</span>
+            </div>
+            <p class="text-xs text-gray-500 text-center">3D Tellar va Noutbuklar • 7 ta Karusel • Smartwatch • Blutus</p>
+            <div class="flex gap-4 text-xs font-bold text-gray-400">
+                <a href="#hom" class="hover:text-white">HOM</a>
+                <a href="#studiya-3d" class="hover:text-white">3D STUDIYA</a>
+                <a href="#sotuv-bolimi" class="hover:text-white">SOTUV</a>
+                <a href="#abaut" class="hover:text-white">ABAUT</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- APPLE QONGIROQ OVOZI TANLASH OYNASI -->
+    <div id="ringtone-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+        <div class="w-full max-w-md rounded-3xl bg-[#13131a] border border-white/15 p-6 shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center"><i class="fa-solid fa-bell text-lg"></i></div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-white">Apple Qongiroq Ovozi</h3>
+                        <p class="text-xs text-gray-400">Eshitib koring va tanlang</p>
+                    </div>
+                </div>
+                <button onclick="closeRingtoneModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-rose-500 text-white flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="my-5 space-y-2.5">
+                <div onclick="selectAndPlayRingtone('Marimba Classic', [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50])" class="cursor-pointer flex items-center justify-between p-3.5 rounded-2xl bg-white/5 hover:bg-blue-600/20 border border-white/10 hover:border-blue-500 transition-all">
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-play-circle text-xl text-blue-400"></i><div><div class="text-sm font-bold text-white">Marimba Classic</div><div class="text-[11px] text-gray-400">Klassik Apple ohangi</div></div></div>
+                    <span class="text-xs font-bold text-blue-400">Eshitish</span>
+                </div>
+                <div onclick="selectAndPlayRingtone('Reflection Pro', [587.33, 880.00, 783.99, 659.25, 880.00, 1174.66])" class="cursor-pointer flex items-center justify-between p-3.5 rounded-2xl bg-white/5 hover:bg-purple-600/20 border border-white/10 hover:border-purple-500 transition-all">
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-play-circle text-xl text-purple-400"></i><div><div class="text-sm font-bold text-white">Reflection (iPhone 18 Pro)</div><div class="text-[11px] text-gray-400">Kristall tovush</div></div></div>
+                    <span class="text-xs font-bold text-purple-400">Eshitish</span>
+                </div>
+                <div onclick="selectAndPlayRingtone('Opening Duo', [440.00, 554.37, 659.25, 880.00, 659.25, 880.00])" class="cursor-pointer flex items-center justify-between p-3.5 rounded-2xl bg-white/5 hover:bg-emerald-600/20 border border-white/10 hover:border-emerald-500 transition-all">
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-play-circle text-xl text-emerald-400"></i><div><div class="text-sm font-bold text-white">Opening (iPhone Duo)</div><div class="text-[11px] text-gray-400">Yorqin va baland ohang</div></div></div>
+                    <span class="text-xs font-bold text-emerald-400">Eshitish</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-white/10">
+                <div class="text-xs text-gray-300">Tanlangan: <span id="selected-ringtone-name" class="font-bold text-amber-400">Reflection Pro</span></div>
+                <button onclick="confirmRingtoneChoice()" class="btn-glow px-5 py-2.5 rounded-xl bg-amber-500 text-black font-extrabold text-xs">Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAVATCHA -->
+    <div id="cart-drawer" class="hidden fixed inset-0 z-[100] flex justify-end bg-black/75 backdrop-blur-sm">
+        <div class="w-full max-w-md bg-[#111116] h-full border-l border-white/10 p-6 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between pb-4 border-b border-white/10">
+                    <h3 class="text-xl font-black text-white">Savatcha</h3>
+                    <button onclick="toggleCartDrawer()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-rose-500 text-white flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="cart-items-container" class="mt-6 space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                    <p class="text-gray-400 text-sm text-center py-10">Savatchangiz bosh.</p>
+                </div>
+            </div>
+            <div class="pt-4 border-t border-white/10 space-y-4">
+                <div class="flex items-center justify-between text-lg font-extrabold">
+                    <span class="text-gray-300">Jami:</span>
+                    <span id="cart-total-price" class="text-blue-400">$0</span>
+                </div>
+                <button onclick="checkoutOrder()" class="btn-glow w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-emerald-600 text-white font-extrabold text-sm">Buyurtmani Rasmiylashtirish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIKASI -->
+    <script>
+        /* =========================================================
+           1. 3D INTERAKTIV TELEFON VA NOUTBUK STUDIYASI LOGIKASI
+           ========================================================= */
+        const devices3DConfig = {
+            iphoneDuo: {
+                type: 'phone',
+                wide: true,
+                tag: '2 EKRANLI BUKLANUVCHI',
+                title: 'iPhone Duo Fold 1TB',
+                screenBadge: 'iPhone Duo Dual OS',
+                backLabel: 'iPHONE DUO TITANIUM',
+                gradient: 'from-purple-950 via-indigo-950 to-black',
+                desc: '7.9 dyuymli ichki va 6.3 dyuymli tashqi ikki tomonlama ekran. Mishkani qimirlatib 360° aylantiring va ekran ichidagi ilovalardan saytlarga kiring.',
+                price: 1799
+            },
+            iphone18: {
+                type: 'phone',
+                wide: false,
+                tag: 'YANGI FLAGMAN 2026',
+                title: 'iPhone 18 Pro Max',
+                screenBadge: 'iOS 20 • A20 Pro',
+                backLabel: 'iPHONE 18 PRO MAX',
+                gradient: 'from-blue-950 via-slate-950 to-black',
+                desc: 'A20 Bionic Neyron chipi, 200 MP periskop uchlik kamera va kosmik titan korpus. Mishka bilan orqa kameralarni aylantirib koring.',
+                price: 1499
+            },
+            iphone17: {
+                type: 'phone',
+                wide: false,
+                tag: 'ENG OMMABOP MODEL',
+                title: 'iPhone 17 Pro 256GB',
+                screenBadge: 'iOS 19 • A19 Pro',
+                backLabel: 'iPHONE 17 PRO',
+                gradient: 'from-emerald-950 via-teal-950 to-black',
+                desc: '120Hz ProMotion ekran, 48MP uchlik kamera tizimi va kun boyi yetadigan kuchli batareya.',
+                price: 1199
+            },
+            makbook: {
+                type: 'laptop',
+                osHtml: '<i class="fa-brands fa-apple mr-1"></i> macOS Sequoia • Mak Book Pro M4',
+                backBrand: 'MAK BOOK PRO M4 MAX',
+                backIcon: 'fa-brands fa-apple',
+                tag: 'APPLE M4 MAX NOUTBUK',
+                title: 'Mak Book Pro 16 M4 Max',
+                desc: 'Mishkani tepaga va pastga qimirlatib noutbuk qopqogini ochib-yoping! Ong-chapga surib 360° atrofini koring.',
+                price: 2199
+            },
+            asus: {
+                type: 'laptop',
+                osHtml: '<i class="fa-brands fa-windows mr-1 text-cyan-400"></i> Windows 11 Pro • Asus Vivo Buuk',
+                backBrand: 'ASUS VIVO BUUK PRO OLED',
+                backIcon: 'fa-solid fa-laptop-code',
+                tag: '4K LUMINA OLED NOUTBUK',
+                title: 'Asus Vivo Buuk Pro 16',
+                desc: 'Intel Core Ultra 9 protsessori. Mishkani tepa-past qimirlatib noutbukni yoping yoki oching, ekran ichidagi saytlarga kiring.',
+                price: 1050
+            }
+        };
+
+        let currentDeviceKey = 'iphoneDuo';
+        let rotY = 0;
+        let rotX = 0;
+        let lidAngle = 0; // 0 = toliq ochiq, -105 = yopiq
+        let isAutoSpin = false;
+        let autoSpinTimer = null;
+
+        function select3DDevice(key) {
+            currentDeviceKey = key;
+            const cfg = devices3DConfig[key];
+
+            // Tugmalar rangini yangilash
+            document.querySelectorAll('.device-switch-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'bg-blue-600', 'bg-emerald-600', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-white/10', 'text-gray-200');
+            });
+            const activeBtn = document.getElementById(`dev-btn-${key}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-white/10', 'text-gray-200');
+                activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow-lg');
+            }
+
+            // Ong panel malumotlarini yangilash
+            document.getElementById('info-panel-tag').textContent = cfg.tag;
+            document.getElementById('info-panel-title').textContent = cfg.title;
+            document.getElementById('info-panel-desc').textContent = cfg.desc;
+            document.getElementById('info-panel-price').textContent = `$${cfg.price.toLocaleString()}`;
+            document.getElementById('info-panel-buy-btn').setAttribute('onclick', `addToCart('${cfg.title}', ${cfg.price})`);
+
+            const phoneModel = document.getElementById('phone-3d-model');
+            const laptopModel = document.getElementById('laptop-3d-model');
+            const lidBtn = document.getElementById('lid-toggle-btn');
+            const lidSliderBox = document.getElementById('lid-slider-box');
+            const hintBadge = document.getElementById('stage-hint-badge');
+
+            if (cfg.type === 'phone') {
+                phoneModel.classList.remove('hidden');
+                laptopModel.classList.add('hidden');
+                lidBtn.classList.add('hidden');
+                lidSliderBox.classList.add('opacity-50', 'pointer-events-none');
+
+                if (cfg.wide) phoneModel.classList.add('duo-wide');
+                else phoneModel.classList.remove('duo-wide');
+
+                document.getElementById('phone-screen-badge').textContent = cfg.screenBadge;
+                document.getElementById('phone-screen-title').textContent = cfg.title;
+                document.getElementById('phone-back-label').textContent = cfg.backLabel;
+
+                const frontShell = document.getElementById('phone-front-shell');
+                frontShell.className = `phone-face phone-front flex flex-col justify-between p-4 bg-gradient-to-b ${cfg.gradient}`;
+                hintBadge.innerHTML = '<i class="fa-solid fa-computer-mouse mr-1"></i> Mishkani qimirlatib telefonni 360° aylantiring';
+            } else {
+                phoneModel.classList.add('hidden');
+                laptopModel.classList.remove('hidden');
+                lidBtn.classList.remove('hidden');
+                lidSliderBox.classList.remove('opacity-50', 'pointer-events-none');
+
+                document.getElementById('laptop-os-name').innerHTML = cfg.osHtml;
+                document.getElementById('laptop-back-brand').textContent = cfg.backBrand;
+                document.getElementById('laptop-back-icon').className = `${cfg.backIcon} text-6xl text-white/85`;
+                hintBadge.innerHTML = '<i class="fa-solid fa-arrows-up-down-left-right mr-1"></i> Mishkani tepa-past surib noutbukni oching/yoping, ong-chapga aylantiring';
+
+                lidAngle = 0;
+                updateLidTransform();
+            }
+
+            reset3DAngle();
+        }
+
+        // Mishka sahna ustida qimirlaganda 360 aylantirish va noutbuk qopqogini ochib-yopish
+        const stage3D = document.getElementById('interactive-3d-stage');
+        stage3D.addEventListener('mousemove', (e) => {
+            if (isAutoSpin) return;
+            const rect = stage3D.getBoundingClientRect();
+            const normX = ((e.clientX - rect.left) / rect.width) * 2 - 1; // -1 dan +1 gacha
+            const normY = ((e.clientY - rect.top) / rect.height) * 2 - 1; // -1 dan +1 gacha
+
+            // Gorizontal harakat: 360 daraja aylantirish (-180 dan +180 gacha)
+            rotY = Math.round(normX * 180);
+            // Vertikal harakat: biroz egilish
+            rotX = Math.round(-normY * 22);
+
+            apply3DRigTransform();
+
+            // Agar noutbuk tanlangan bolsa, mishkani pastga tushirganda noutbuk qopqogi yopiladi, tepaga kotarganda ochiladi
+            if (devices3DConfig[currentDeviceKey].type === 'laptop') {
+                // normY: -1 (tepa -> ochiq 0deg), +1 (past -> yopiq -105deg)
+                const mappedLid = Math.round(((normY + 1) / 2) * -105);
+                lidAngle = Math.max(-105, Math.min(0, mappedLid));
+                updateLidTransform();
+            }
+        });
+
+        function apply3DRigTransform() {
+            const rig = document.getElementById('device-3d-rig');
+            rig.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+            document.getElementById('angle-readout').textContent = `Y: ${rotY}° | X: ${rotX}°`;
+            document.getElementById('manual-rotate-slider').value = rotY;
+            document.getElementById('slider-rot-val').textContent = `${rotY}°`;
+        }
+
+        function updateLidTransform() {
+            const lid = document.getElementById('laptop-lid-hinge');
+            lid.style.transform = `rotateX(${lidAngle}deg)`;
+            document.getElementById('manual-lid-slider').value = lidAngle;
+
+            const openPercent = Math.round(((lidAngle + 105) / 105) * 100);
+            const badge = document.getElementById('lid-angle-badge');
+            const sliderVal = document.getElementById('slider-lid-val');
+            if (openPercent <= 10) {
+                badge.textContent = 'Qopqoq: Yopiq';
+                sliderVal.textContent = 'Yopiq';
+            } else {
+                badge.textContent = `Qopqoq: ${openPercent}% Ochiq`;
+                sliderVal.textContent = `${openPercent}%`;
+            }
+        }
+
+        function manualRotateUpdate(val) {
+            rotY = parseInt(val, 10);
+            apply3DRigTransform();
+        }
+
+        function manualLidUpdate(val) {
+            lidAngle = parseInt(val, 10);
+            updateLidTransform();
+        }
+
+        function toggleLaptopLid() {
+            lidAngle = lidAngle < -50 ? 0 : -105;
+            updateLidTransform();
+        }
+
+        function reset3DAngle() {
+            rotY = 0;
+            rotX = 0;
+            apply3DRigTransform();
+        }
+
+        function toggleAutoSpin() {
+            isAutoSpin = !isAutoSpin;
+            const btn = document.getElementById('auto-spin-btn');
+            if (isAutoSpin) {
+                btn.innerHTML = '<i class="fa-solid fa-sync fa-spin mr-1"></i> Avto 360°: ON';
+                btn.classList.add('bg-blue-600', 'text-white');
+                autoSpinTimer = setInterval(() => {
+                    rotY += 3;
+                    if (rotY > 180) rotY = -180;
+                    apply3DRigTransform();
+                }, 30);
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-sync mr-1"></i> Avto 360°: OFF';
+                btn.classList.remove('bg-blue-600', 'text-white');
+                clearInterval(autoSpinTimer);
+            }
+        }
+
+        /* =========================================================
+           2. 16 TA MAHSULOT BAZASI (SOTUV BOLIMI)
+           ========================================================= */
+        const productsData = [
+            { id: 1, name: "iPhone Duo Fold 1TB", category: "iphone", badge: "2 EKRANLI DUO", badgeColor: "bg-purple-600", price: 1799, specs: "7.9 + 6.3 dyuym OLED • A20 Bionic", img: "https://images.unsplash.com/photo-1616348436168-de43ad0db179?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/3b0764/c084fc?text=iPhone+Duo" },
+            { id: 2, name: "iPhone 18 Pro Max", category: "iphone", badge: "YANGI 2026", badgeColor: "bg-blue-600", price: 1499, specs: "A20 Pro Chip • 512GB • Titan", img: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/1e293b/60a5fa?text=iPhone+18+Pro" },
+            { id: 3, name: "iPhone 17 Pro 256GB", category: "iphone", badge: "OMMABOP", badgeColor: "bg-indigo-600", price: 1199, specs: "A19 Pro • 48MP Uchlik Kamera", img: "https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/1e1b4b/818cf8?text=iPhone+17+Pro" },
+            { id: 4, name: "iPhone Duo Air 512GB", category: "iphone", badge: "YENGIL DUO", badgeColor: "bg-pink-600", price: 1550, specs: "Buklanadigan Ultra Yupqa", img: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/500724/f472b6?text=iPhone+Duo+Air" },
+            { id: 5, name: "Mak Book Pro 16 M4 Max", category: "laptop", badge: "TOP NOUTBUK", badgeColor: "bg-emerald-600", price: 2199, specs: "Apple M4 Max • 36GB RAM • 1TB", img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/064e3b/34d399?text=Mak+Book+Pro" },
+            { id: 6, name: "Asus Vivo Buuk Pro 16", category: "laptop", badge: "4K OLED", badgeColor: "bg-cyan-600", price: 1050, specs: "Core Ultra 9 • 32GB RAM", img: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/0f172a/38bdf8?text=Asus+Vivo+Buuk" },
+            { id: 7, name: "Mak Book Air 15 M4", category: "laptop", badge: "YENGIL", badgeColor: "bg-teal-600", price: 1350, specs: "M4 Chip • 16GB RAM • 512GB", img: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/134e4a/2dd4bf?text=Mak+Book+Air" },
+            { id: 8, name: "Asus ROG Zephyrus G16", category: "laptop", badge: "GAMING PRO", badgeColor: "bg-rose-600", price: 1890, specs: "RTX 4080 • 32GB RAM • 240Hz", img: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/4c0519/fb7185?text=Asus+ROG" },
+            { id: 9, name: "Apple Watch Ultra 3", category: "watch", badge: "TITAN 49MM", badgeColor: "bg-orange-600", price: 799, specs: "72 soat batareya • 3000 nit", img: "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/431407/fb923c?text=Watch+Ultra+3" },
+            { id: 10, name: "Apple Watch Series 11", category: "watch", badge: "YANGI SOAT", badgeColor: "bg-indigo-600", price: 429, specs: "EKG • Qon kislorodi", img: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/1e1b4b/a78bfa?text=Watch+Series+11" },
+            { id: 11, name: "Galaxy Watch Ultra", category: "watch", badge: "GALAXY AI", badgeColor: "bg-blue-600", price: 649, specs: "Safir shisha • 100m suvga chidamli", img: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/0f172a/38bdf8?text=Galaxy+Watch" },
+            { id: 12, name: "Garmin Fenix 8 Solar", category: "watch", badge: "28 KUN ZARYAD", badgeColor: "bg-emerald-600", price: 899, specs: "Quyosh batareyasi • Sport GPS", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/064e3b/34d399?text=Garmin+Fenix+8" },
+            { id: 13, name: "AirPods Max 2 USB-C", category: "bluetooth", badge: "H3 CHIP • ANC", badgeColor: "bg-cyan-600", price: 549, specs: "Fazoviy 3D Audio • 30 soat", img: "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/083344/22d3ee?text=AirPods+Max+2" },
+            { id: 14, name: "AirPods Pro 3 MagSafe", category: "bluetooth", badge: "BLUTUS 5.4", badgeColor: "bg-blue-600", price: 249, specs: "Shovqinni bosish • Kristall ovoz", img: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/1e293b/60a5fa?text=AirPods+Pro+3" },
+            { id: 15, name: "Sony WH-1000XM6", category: "bluetooth", badge: "HI-RES AUDIO", badgeColor: "bg-purple-600", price: 399, specs: "40 soat batareya • Kuchli ANC", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/2e1065/c084fc?text=Sony+XM6" },
+            { id: 16, name: "JBL Tour Pro 3 Blutus", category: "bluetooth", badge: "EKRANLI KEYS", badgeColor: "bg-amber-600", price: 279, specs: "Sensor ekranli zaryadlash qutisi", img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80", fallback: "https://placehold.co/500x400/451a03/fbbf24?text=JBL+Tour+Pro" }
+        ];
+
+        function renderProducts(filter = 'all') {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            const filtered = filter === 'all' ? productsData : productsData.filter(item => item.category === filter);
+
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'hover-card rounded-3xl p-5 flex flex-col justify-between group';
+                card.innerHTML = `
+                    <div>
+                        <div class="relative h-52 rounded-2xl overflow-hidden mb-4 bg-zinc-900">
+                            <img src="${product.img}" onerror="this.src='${product.fallback}'" alt="${product.name}" class="w-full h-full object-cover hover-img-zoom">
+                            <span class="absolute top-3 left-3 px-3 py-1 rounded-full ${product.badgeColor} text-white text-[11px] font-extrabold">${product.badge}</span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-white group-hover:text-blue-400 transition-colors">${product.name}</h3>
+                        <p class="text-xs text-gray-400 mt-1.5">${product.specs}</p>
+                    </div>
+                    <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+                        <span class="text-xl font-black text-white">$${product.price.toLocaleString()}</span>
+                        <button onclick="addToCart('${product.name}', ${product.price})" class="btn-glow px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-cart-plus"></i> Sotib olish
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            attachCardHoverListeners();
+        }
+
+        function filterProducts(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === category) {
+                    btn.classList.remove('bg-white/10', 'text-gray-200');
+                    btn.classList.add('bg-blue-600', 'text-white');
+                } else {
+                    btn.classList.add('bg-white/10', 'text-gray-200');
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                }
+            });
+            renderProducts(category);
+        }
+
+        /* =========================================================
+           3. MISHKA YORUGLIK VA 3D TILT HOVER EFFEKTLARI
+           ========================================================= */
+        const mouseGlow = document.getElementById('mouse-glow');
+        document.addEventListener('mousemove', (e) => {
+            mouseGlow.style.left = e.clientX + 'px';
+            mouseGlow.style.top = e.clientY + 'px';
+        });
+
+        function attachCardHoverListeners() {
+            document.querySelectorAll('.hover-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -4;
+                    const rotateY = ((x - centerX) / centerX) * 4;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+                });
+            });
+        }
+
+        /* =========================================================
+           4. 7 TA KARUSEL BOSHQARUVI
+           ========================================================= */
+        const carouselPositions = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0 };
+
+        function moveCarousel(carouselId, direction) {
+            const track = document.getElementById(`carousel-${carouselId}`);
+            if (!track) return;
+            const totalItems = track.children.length;
+            let visibleItems = 1;
+
+            if (carouselId !== 1) {
+                if (window.innerWidth >= 1024) visibleItems = 3;
+                else if (window.innerWidth >= 768) visibleItems = 2;
+            }
+
+            const maxIndex = Math.max(0, totalItems - visibleItems);
+            carouselPositions[carouselId] += direction;
+
+            if (carouselPositions[carouselId] < 0) carouselPositions[carouselId] = maxIndex;
+            else if (carouselPositions[carouselId] > maxIndex) carouselPositions[carouselId] = 0;
+
+            const stepPercent = carouselId === 1 ? 100 : (100 / visibleItems);
+            track.style.transform = `translateX(-${carouselPositions[carouselId] * stepPercent}%)`;
+        }
+
+        setInterval(() => { moveCarousel(1, 1); }, 5500);
+
+        /* =========================================================
+           5. LOGO MENYU, FAYLDAN RASM YUKLASH VA VIDEO
+           ========================================================= */
+        function toggleLogoMenu() {
+            document.getElementById('logo-mega-dropdown').classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', (e) => {
+            const btn = document.getElementById('logo-dropdown-btn');
+            const menu = document.getElementById('logo-mega-dropdown');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function triggerFileSelect() {
+            document.getElementById('hidden-file-input').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('custom-uploaded-image').src = e.target.result;
+                    showToast('Yangi rasm muvaffaqiyatli joylashtirildi!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleVideoPlay() {
+            const video = document.getElementById('promo-video');
+            const btn = document.getElementById('video-play-btn');
+            if (video.paused) {
+                video.play();
+                btn.innerHTML = '<i class="fa-solid fa-pause mr-1"></i> Pauza';
+            } else {
+                video.pause();
+                btn.innerHTML = '<i class="fa-solid fa-play mr-1"></i> Davom etish';
+            }
+        }
+
+        /* =========================================================
+           6. FON QOSHIGI VA APPLE QONGIROQ OVOZI
+           ========================================================= */
+        let audioCtx = null;
+        let bgMusicInterval = null;
+        let isBgMusicPlaying = false;
+        let selectedRingtoneName = "Reflection Pro";
+
+        function initAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playTone(freq, duration, type = 'sine', volume = 0.06) {
+            try {
+                initAudioContext();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function startBgMusic() {
+            if (isBgMusicPlaying) return;
+            isBgMusicPlaying = true;
+            document.getElementById('eq-bars').classList.add('eq-playing');
+            document.getElementById('music-status-text').textContent = 'Qoshiq: ON';
+
+            const chords = [261.63, 329.63, 392.00, 493.88, 392.00, 329.63];
+            let step = 0;
+            bgMusicInterval = setInterval(() => {
+                if (!isBgMusicPlaying) return;
+                playTone(chords[step % chords.length], 0.9, 'triangle', 0.03);
+                step++;
+            }, 650);
+        }
+
+        function stopBgMusic() {
+            isBgMusicPlaying = false;
+            clearInterval(bgMusicInterval);
+            document.getElementById('eq-bars').classList.remove('eq-playing');
+            document.getElementById('music-status-text').textContent = 'Qoshiq: OFF';
+        }
+
+        function toggleBgMusic() {
+            if (isBgMusicPlaying) { stopBgMusic(); showToast('Fon qoshigi ochirildi'); }
+            else { startBgMusic(); showToast('Fon qoshigi ijro etilmoqda'); }
+        }
+
+        document.addEventListener('click', function autoStartOnce() {
+            startBgMusic();
+            document.removeEventListener('click', autoStartOnce);
+        }, { once: true });
+
+        function openRingtoneModal() { document.getElementById('ringtone-modal').classList.remove('hidden'); }
+        function closeRingtoneModal() { document.getElementById('ringtone-modal').classList.add('hidden'); }
+
+        function selectAndPlayRingtone(name, notes) {
+            selectedRingtoneName = name;
+            document.getElementById('selected-ringtone-name').textContent = name;
+            notes.forEach((freq, idx) => { setTimeout(() => playTone(freq, 0.35, 'sine', 0.14), idx * 190); });
+        }
+
+        function confirmRingtoneChoice() {
+            closeRingtoneModal();
+            showToast(`Qongiroq ovozi saqlandi: ${selectedRingtoneName}`);
+        }
+
+        /* =========================================================
+           7. SAVATCHA VA TOAST XABARLAR
+           ========================================================= */
+        let cart = [];
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartUI();
+            showToast(`${name} savatchaga qoshildi!`);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-badge').textContent = cart.length;
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total-price');
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-sm text-center py-10">Savatchangiz bosh.</p>';
+                totalEl.textContent = '$0';
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map((item, idx) => {
+                total += item.price;
+                return `
+                    <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white/5 border border-white/10">
+                        <div>
+                            <div class="text-sm font-bold text-white">${item.name}</div>
+                            <div class="text-xs text-blue-400 font-semibold">$${item.price.toLocaleString()}</div>
+                        </div>
+                        <button onclick="removeFromCart(${idx})" class="w-8 h-8 rounded-lg bg-rose-500/20 hover:bg-rose-500 text-rose-400 hover:text-white"><i class="fa-solid fa-trash-can text-xs"></i></button>
+                    </div>
+                `;
+            }).join('');
+            totalEl.textContent = `$${total.toLocaleString()}`;
+        }
+
+        function toggleCartDrawer() { document.getElementById('cart-drawer').classList.toggle('hidden'); }
+
+        function checkoutOrder() {
+            if (cart.length === 0) { showToast('Avval mahsulot tanlang!'); return; }
+            cart = [];
+            updateCartUI();
+            toggleCartDrawer();
+            showToast('Buyurtmangiz qabul qilindi!');
+        }
+
+        function showToast(message) {
+            const box = document.getElementById('toast-box');
+            const toast = document.createElement('div');
+            toast.className = 'px-5 py-3.5 rounded-2xl bg-zinc-900/95 border border-blue-500/50 text-white text-xs font-bold shadow-2xl flex items-center gap-2.5';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-blue-400 text-base"></i> <span>${message}</span>`;
+            box.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        window.onload = function() {
+            select3DDevice('iphoneDuo');
+            renderProducts('all');
+            attachCardHoverListeners();
+        };
+    </script>
+</body>
+</html>
